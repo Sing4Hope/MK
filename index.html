@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>meldkamer - kennermeland surveillance</title>
+<title>meldkamer - Kennermeland Surveillance</title>
+<!-- Favicon toevoegen: zet hier je LSM-logo bestand in dezelfde map -->
+<link rel="icon" href="lsm-logo.png" type="image/png" />
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -28,8 +30,7 @@
     margin-top: 15px;
     font-weight: bold;
   }
-  /* Gelijktrekken van gebruikersnaam en wachtwoord velden */
-  input[type="text"], input[type="password"], input[type="text"], textarea {
+  input[type="text"], input[type="password"], textarea {
     width: 100%;
     padding: 8px;
     margin-top: 6px;
@@ -40,7 +41,7 @@
     font-size: 16px;
   }
   input[type="text"], input[type="password"] {
-    height: 38px; /* vaste hoogte voor gelijke velden */
+    height: 38px; /* gelijke hoogte */
   }
   textarea {
     resize: vertical;
@@ -107,7 +108,8 @@
   const logoutBtn = document.getElementById('logoutBtn');
   const loginMessage = document.getElementById('loginMessage');
   const message = document.getElementById('message');
-  const webhookURL = 'https://discord.com/api/webhooks/1372626691033141380/4DUrU0cVWezBccUQDYn6rUuPrv-vJ1BgUAdNeDzym5VuuOWUYUb_5nkXrmhnPmHMFGNS';
+
+  const webhookURL = 'https://discord.com/api/webhooks/1372636252720992286/fCVXnSg8R3Mwg1Od2Mmcbkq23gfONCFwY_YKgNr_qgcwkbbCvigcWXuQaDWKD2kAuj-b';
 
   function checkLogin(username, password) {
     return username === 'meldkamer' && password === 'veilig123';
@@ -150,13 +152,22 @@
       return;
     }
 
-    const content = `**Nieuwe melding:**\n**Locatie:** ${locatie}\n**Informatie:** ${informatie}\n**Roepnummers:** ${roepnummers}`;
+    const embed = {
+      title: "Nieuwe melding",
+      color: 0x3498db, // blauw
+      fields: [
+        { name: "Locatie", value: locatie, inline: false },
+        { name: "Informatie", value: informatie, inline: false },
+        { name: "Roepnummers", value: roepnummers, inline: false }
+      ],
+      timestamp: new Date().toISOString()
+    };
 
     try {
       const response = await fetch(webhookURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
+        body: JSON.stringify({ embeds: [embed] })
       });
 
       if (response.ok) {
