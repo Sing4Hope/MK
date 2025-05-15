@@ -77,14 +77,14 @@
 <div id="meldingenSection" style="display:none;">
   <h2>Melding maken</h2>
   <form id="meldingForm">
-    <label for="locatie">Locatie</label>
+    <label for="locatie">Locatie:</label>
     <input type="text" id="locatie" placeholder="Bijv. Straatnaam 123, Stad" required />
 
-    <label for="roepnummers">Roepnummers (type hulpdiensten, gescheiden door komma)</label>
-    <input type="text" id="roepnummers" placeholder="Bijv. Politie, Brandweer, Ambulance" required />
-
-    <label for="informatie">Informatie</label>
+    <label for="informatie">Informatie:</label>
     <textarea id="informatie" placeholder="Extra informatie over de melding" required></textarea>
+
+    <label for="roepnummers">Roepnummers:</label>
+    <input type="text" id="roepnummers" placeholder="Bijv. Politie, Brandweer, Ambulance" required />
 
     <button type="submit">Verstuur melding</button>
   </form>
@@ -133,16 +133,16 @@
     e.preventDefault();
     message.textContent = '';
     const locatie = document.getElementById('locatie').value.trim();
-    const roepnummers = document.getElementById('roepnummers').value.trim();
     const informatie = document.getElementById('informatie').value.trim();
+    const roepnummers = document.getElementById('roepnummers').value.trim();
 
-    if (!locatie || !roepnummers || !informatie) {
+    if (!locatie || !informatie || !roepnummers) {
       message.style.color = 'red';
-      message.textContent = 'Vul locatie, roepnummers en informatie in.';
+      message.textContent = 'Vul alle velden in aub.';
       return;
     }
 
-    const content = `**Nieuwe melding:**\n**Locatie:** ${locatie}\n**Roepnummers:** ${roepnummers}\n**Informatie:** ${informatie}`;
+    const content = `**Nieuwe melding:**\n**Locatie:** ${locatie}\n**Informatie:** ${informatie}\n**Roepnummers:** ${roepnummers}`;
 
     try {
       const response = await fetch(webhookURL, {
