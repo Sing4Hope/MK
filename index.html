@@ -99,26 +99,41 @@
     const roepnummer = document.getElementById('roepnummer').value;
     const foutText = document.getElementById('loginFout');
 
+    if (!role) {
+      foutText.textContent = 'Kies eerst een rol!';
+      return;
+    }
+
     if (wachtwoord !== wachtwoorden[role]) {
       foutText.textContent = 'Verkeerd wachtwoord of rol!';
       return;
     }
 
+    if (role !== 'meldkamer' && !roepnummer.trim()) {
+      foutText.textContent = 'Vul je roepnummer in!';
+      return;
+    }
+
+    foutText.textContent = '';
     document.getElementById('loginScreen').classList.add('hidden');
     huidigeRol = role;
-    huidigeRoepnummer = roepnummer;
+    huidigeRoepnummer = roepnummer.trim();
 
     if (role === 'meldkamer') {
       document.getElementById('meldkamerDashboard').classList.remove('hidden');
     } else {
       document.getElementById('dienstDashboard').classList.remove('hidden');
-      document.getElementById('dienstTitel').textContent = `Ingelogd als ${role} (${roepnummer})`;
+      document.getElementById('dienstTitel').textContent = `Ingelogd als ${role} (${huidigeRoepnummer})`;
       document.getElementById('dienstKnoppen').innerHTML = `
         <button onclick="meldingVersturen('spraak')">📞 Spraakaanvraag</button>
         <button onclick="meldingVersturen('urgent')">🚨 Urgent</button>
         <button onclick="meldingVersturen('nood')">🆘 Noodknop</button>
       `;
-      actieveEenheden.push({ role, roepnummer, status: 'actief', melding: '' });
+
+      // Voeg de eenheid toe aan de lijst als die er nog niet is
+      if (!actieveEenheden.find(e => e.roepnummer === huidigeRoepnummer)) {
+        actieveEenheden.push({ role, roepnummer: huidigeRoepnummer, status: 'actief', melding: '' });
+      }
     }
 
     updateMeldingen();
@@ -181,11 +196,12 @@
     });
   }
 
-  // Automatisch elke 1 seconde vernieuwen
+  // Automatisch updaten elke seconde
   setInterval(() => {
     updateMeldingen();
     updateEenheden();
   }, 1000);
+
 </script>
 
 </body>
