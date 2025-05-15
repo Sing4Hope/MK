@@ -28,16 +28,18 @@
     margin-top: 15px;
     font-weight: bold;
   }
-  input[type="text"], select {
+  input[type="text"], textarea {
     width: 100%;
     padding: 8px;
     margin-top: 6px;
     box-sizing: border-box;
     border-radius: 4px;
     border: 1px solid #ccc;
+    font-family: Arial, sans-serif;
   }
-  select[multiple] {
-    height: 100px;
+  textarea {
+    resize: vertical;
+    min-height: 80px;
   }
   button {
     margin-top: 20px;
@@ -78,14 +80,11 @@
     <label for="locatie">Locatie</label>
     <input type="text" id="locatie" placeholder="Bijv. Straatnaam 123, Stad" required />
 
-    <label for="roepnummers">Roepnummers koppelen (houd Ctrl ingedrukt voor meerdere)</label>
-    <select id="roepnummers" multiple required>
-      <option value="Politie">Politie</option>
-      <option value="Brandweer">Brandweer</option>
-      <option value="Ambulance">Ambulance</option>
-      <option value="KMar">KMar</option>
-      <option value="Meldkamer">Meldkamer</option>
-    </select>
+    <label for="roepnummers">Roepnummers (type hulpdiensten, gescheiden door komma)</label>
+    <input type="text" id="roepnummers" placeholder="Bijv. Politie, Brandweer, Ambulance" required />
+
+    <label for="informatie">Informatie</label>
+    <textarea id="informatie" placeholder="Extra informatie over de melding" required></textarea>
 
     <button type="submit">Verstuur melding</button>
   </form>
@@ -102,7 +101,6 @@
   const message = document.getElementById('message');
   const webhookURL = 'https://discord.com/api/webhooks/1372626691033141380/4DUrU0cVWezBccUQDYn6rUuPrv-vJ1BgUAdNeDzym5VuuOWUYUb_5nkXrmhnPmHMFGNS';
 
-  // Dummy login check - vervang dit met echte authenticatie als nodig
   function checkLogin(username, password) {
     return username === 'meldkamer' && password === 'veilig123';
   }
@@ -135,17 +133,16 @@
     e.preventDefault();
     message.textContent = '';
     const locatie = document.getElementById('locatie').value.trim();
-    const roepnummersSelect = document.getElementById('roepnummers');
-    const selectedRoepnummers = Array.from(roepnummersSelect.selectedOptions).map(opt => opt.value);
+    const roepnummers = document.getElementById('roepnummers').value.trim();
+    const informatie = document.getElementById('informatie').value.trim();
 
-    if (!locatie || selectedRoepnummers.length === 0) {
+    if (!locatie || !roepnummers || !informatie) {
       message.style.color = 'red';
-      message.textContent = 'Vul locatie en roepnummers in.';
+      message.textContent = 'Vul locatie, roepnummers en informatie in.';
       return;
     }
 
-    // Discord webhook payload
-    const content = `Nieuwe melding:\n**Locatie:** ${locatie}\n**Roepnummers:** ${selectedRoepnummers.join(', ')}`;
+    const content = `**Nieuwe melding:**\n**Locatie:** ${locatie}\n**Roepnummers:** ${roepnummers}\n**Informatie:** ${informatie}`;
 
     try {
       const response = await fetch(webhookURL, {
