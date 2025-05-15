@@ -5,192 +5,267 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Meldkamersysteem</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #fff; color: #000; padding: 20px; }
-    .hidden { display: none; }
-    .unit-box { padding: 10px; margin-top: 10px; border-radius: 8px; color: white; font-weight: bold; }
-    .unit-p { background-color: lightblue; color: black; }
-    .unit-k { background-color: darkblue; }
-    .unit-b { background-color: red; }
-    .unit-a { background-color: gold; color: black; }
-    .blinking { animation: blink 1s infinite; }
-    @keyframes blink { 0% { background-color: red; } 50% { background-color: darkred; } 100% { background-color: red; } }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000;
+      padding: 20px;
+    }
+    .login-container,
+    .dashboard {
+      max-width: 900px;
+      margin: auto;
+      background-color: #f1f1f1;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input,
+    select,
+    button,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .hidden {
+      display: none;
+    }
+    .unit-box {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+    }
+    .unit-p {
+      background-color: lightblue;
+      color: black;
+    }
+    .unit-k {
+      background-color: darkblue;
+    }
+    .unit-b {
+      background-color: red;
+    }
+    .unit-a {
+      background-color: gold;
+      color: black;
+    }
+    .blinking {
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% {
+        background-color: red;
+      }
+      50% {
+        background-color: darkred;
+      }
+      100% {
+        background-color: red;
+      }
+    }
   </style>
 </head>
 <body>
-
-<div id="loginScreen">
-  <h2>Inloggen</h2>
-  <label for="role">Rol:</label>
-  <select id="role">
-    <option value="">-- Kies je rol --</option>
-    <option value="meldkamer">Meldkamer</option>
-    <option value="politie">Politie</option>
-    <option value="brandweer">Brandweer</option>
-    <option value="ambulance">Ambulance</option>
-    <option value="kmar">KMar</option>
-  </select>
-
-  <div id="roepnummerDiv" class="hidden">
-    <label for="roepnummer">Roepnummer:</label>
-    <input type="text" id="roepnummer" placeholder="Bijv. 12-343" />
-  </div>
-
-  <label for="password">Wachtwoord:</label>
-  <input type="password" id="password" placeholder="Wachtwoord" />
-
-  <button onclick="inloggen()">Inloggen</button>
-  <p id="loginFout" style="color: red;"></p>
-</div>
-
-<div id="meldkamerDashboard" class="hidden">
-  <h2>Meldkamerpaneel</h2>
-  <div>
-    <h3>Melding aanmaken</h3>
-    <textarea id="meldingText" placeholder="Typ hier de melding..."></textarea>
-    <select id="meldingDienst">
+  <div class="login-container" id="loginScreen">
+    <h2>Inloggen</h2>
+    <label for="role">Rol:</label>
+    <select id="role">
+      <option value="">-- Kies je rol --</option>
+      <option value="meldkamer">Meldkamer</option>
       <option value="politie">Politie</option>
       <option value="brandweer">Brandweer</option>
       <option value="ambulance">Ambulance</option>
       <option value="kmar">KMar</option>
     </select>
-    <button onclick="meldingAanmaken()">Melding versturen</button>
+
+    <div id="roepnummerDiv" class="hidden">
+      <label for="roepnummer">Roepnummer:</label>
+      <input type="text" id="roepnummer" placeholder="Bijv. 12-343" />
+    </div>
+
+    <label for="password">Wachtwoord:</label>
+    <input type="password" id="password" placeholder="Wachtwoord" />
+
+    <button onclick="inloggen()">Inloggen</button>
+    <p id="loginFout" style="color: red;"></p>
   </div>
-  <div id="alleMeldingen"></div>
-  <div id="actieveEenheden"></div>
-</div>
 
-<div id="dienstDashboard" class="hidden">
-  <h2 id="dienstTitel"></h2>
-  <div id="dienstKnoppen"></div>
-  <div id="dienstMeldingen"></div>
-</div>
+  <div class="dashboard hidden" id="meldkamerDashboard">
+    <h2>Meldkamerpaneel</h2>
+    <div>
+      <h3>Melding aanmaken</h3>
+      <textarea id="meldingText" placeholder="Typ hier de melding..."></textarea>
+      <select id="meldingDienst">
+        <option value="politie">Politie</option>
+        <option value="brandweer">Brandweer</option>
+        <option value="ambulance">Ambulance</option>
+        <option value="kmar">KMar</option>
+      </select>
+      <button onclick="meldingAanmaken()">Melding versturen</button>
+    </div>
+    <div id="alleMeldingen"></div>
+    <div id="actieveEenheden"></div>
+  </div>
 
-<script>
-  const wachtwoorden = {
-    meldkamer: 'meld123',
-    politie: '112politie',
-    brandweer: '112brand',
-    ambulance: '112ambu',
-    kmar: '112kmar'
-  };
+  <div class="dashboard hidden" id="dienstDashboard">
+    <h2 id="dienstTitel"></h2>
+    <div id="dienstKnoppen"></div>
+    <div id="dienstMeldingen"></div>
+  </div>
 
-  const roleSelect = document.getElementById('role');
-  const roepnummerDiv = document.getElementById('roepnummerDiv');
-  const roepnummerInput = document.getElementById('roepnummer');
+  <script>
+    const webhookURL = 'https://discord.com/api/webhooks/1372626691033141380/4DUrU0cVWezBccUQDYn6rUuPrv-vJ1BgUAdNeDzym5VuuOWUYUb_5nkXrmhnPmHMFGNS';
 
-  let actieveEenheden = [];
-  let meldingen = [];
-  let huidigeRol = '';
-  let huidigeRoepnummer = '';
-
-  // Toon of verberg roepnummer veld op basis van rol
-  roleSelect.addEventListener('change', () => {
-    if (roleSelect.value && roleSelect.value !== 'meldkamer') {
-      roepnummerDiv.classList.remove('hidden');
-    } else {
-      roepnummerDiv.classList.add('hidden');
-    }
-  });
-
-  function inloggen() {
-    const role = roleSelect.value;
-    const wachtwoord = document.getElementById('password').value;
-    const roepnummer = roepnummerInput.value;
-    const foutText = document.getElementById('loginFout');
-
-    if (wachtwoord !== wachtwoorden[role]) {
-      foutText.textContent = 'Verkeerd wachtwoord of rol!';
-      return;
+    function stuurNaarDiscord(content) {
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: content,
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            console.error('Fout bij versturen naar Discord:', response.statusText);
+          }
+        })
+        .catch((error) => console.error('Fetch error:', error));
     }
 
-    huidigeRol = role;
-    huidigeRoepnummer = roepnummer;
+    const wachtwoorden = {
+      meldkamer: 'meld123',
+      politie: '112politie',
+      brandweer: '112brand',
+      ambulance: '112ambu',
+      kmar: '112kmar',
+    };
 
-    document.getElementById('loginScreen').classList.add('hidden');
+    const roleSelect = document.getElementById('role');
+    const roepnummerDiv = document.getElementById('roepnummerDiv');
+    const roepnummerInput = document.getElementById('roepnummer');
 
-    if (role === 'meldkamer') {
-      document.getElementById('meldkamerDashboard').classList.remove('hidden');
-    } else {
-      document.getElementById('dienstDashboard').classList.remove('hidden');
-      document.getElementById('dienstTitel').textContent = `Ingelogd als ${role} (${roepnummer})`;
-      document.getElementById('dienstKnoppen').innerHTML = `
-        <button onclick="meldingVersturen('spraak')">📞 Spraakaanvraag</button>
-        <button onclick="meldingVersturen('urgent')">🚨 Urgent</button>
-        <button onclick="meldingVersturen('nood')">🆘 Noodknop</button>
-      `;
-      actieveEenheden.push({ role, roepnummer, status: 'actief', melding: '' });
-    }
+    let actieveEenheden = [];
+    let meldingen = [];
+    let huidigeRol = '';
+    let huidigeRoepnummer = '';
 
-    updateMeldingen();
-    updateEenheden();
-  }
-
-  function meldingVersturen(type) {
-    const eenheid = actieveEenheden.find(e => e.roepnummer === huidigeRoepnummer);
-    if (!eenheid) return;
-
-    if (type === 'spraak') eenheid.melding = 'Spraakaanvraag';
-    else if (type === 'urgent') eenheid.melding = 'Urgent';
-    else if (type === 'nood') eenheid.melding = 'Noodknop';
-
-    updateEenheden();
-  }
-
-  function meldingAanmaken() {
-    const text = document.getElementById('meldingText').value;
-    const dienst = document.getElementById('meldingDienst').value;
-
-    if (text && dienst) {
-      meldingen.push({ text, dienst });
-      document.getElementById('meldingText').value = '';
-      updateMeldingen();
-    }
-  }
-
-  function updateMeldingen() {
-    const meldkamerDiv = document.getElementById('alleMeldingen');
-    const dienstDiv = document.getElementById('dienstMeldingen');
-
-    if (meldkamerDiv) {
-      meldkamerDiv.innerHTML = '<h3>Alle meldingen</h3>';
-      meldingen.forEach(m => {
-        meldkamerDiv.innerHTML += `<p>[${m.dienst.toUpperCase()}] ${m.text}</p>`;
-      });
-    }
-
-    if (dienstDiv && huidigeRol !== 'meldkamer') {
-      dienstDiv.innerHTML = '<h3>Toegewezen meldingen</h3>';
-      meldingen.filter(m => m.dienst === huidigeRol).forEach(m => {
-        dienstDiv.innerHTML += `<p>${m.text}</p>`;
-      });
-    }
-  }
-
-  function updateEenheden() {
-    const container = document.getElementById('actieveEenheden');
-    if (!container) return;
-
-    container.innerHTML = '<h3>Actieve eenheden</h3>';
-    actieveEenheden.forEach(e => {
-      let kleurClass = 'unit-box';
-      if (e.role === 'politie') kleurClass += ' unit-p';
-      else if (e.role === 'brandweer') kleurClass += ' unit-b';
-      else if (e.role === 'ambulance') kleurClass += ' unit-a';
-      else if (e.role === 'kmar') kleurClass += ' unit-k';
-
-      if (e.melding) kleurClass += ' blinking';
-
-      const meldingTekst = e.melding ? ` (<small>${e.melding}</small>)` : '';
-      container.innerHTML += `<div class="${kleurClass}">${e.roepnummer}${meldingTekst}</div>`;
+    roleSelect.addEventListener('change', () => {
+      if (roleSelect.value && roleSelect.value !== 'meldkamer') {
+        roepnummerDiv.classList.remove('hidden');
+      } else {
+        roepnummerDiv.classList.add('hidden');
+      }
     });
-  }
 
-  // Automatische update elke seconde (1000 ms)
-  setInterval(() => {
-    updateMeldingen();
-    updateEenheden();
-  }, 1000);
-</script>
+    function inloggen() {
+      const role = document.getElementById('role').value;
+      const wachtwoord = document.getElementById('password').value;
+      const roepnummer = document.getElementById('roepnummer').value;
+      const foutText = document.getElementById('loginFout');
 
+      if (wachtwoord !== wachtwoorden[role]) {
+        foutText.textContent = 'Verkeerd wachtwoord of rol!';
+        return;
+      }
+
+      document.getElementById('loginScreen').classList.add('hidden');
+      huidigeRol = role;
+      huidigeRoepnummer = roepnummer;
+
+      if (role === 'meldkamer') {
+        document.getElementById('meldkamerDashboard').classList.remove('hidden');
+      } else {
+        document.getElementById('dienstDashboard').classList.remove('hidden');
+        document.getElementById('dienstTitel').textContent = `Ingelogd als ${role} (${roepnummer})`;
+        document.getElementById('dienstKnoppen').innerHTML = `
+          <button onclick="meldingVersturen('spraak')">📞 Spraakaanvraag</button>
+          <button onclick="meldingVersturen('urgent')">🚨 Urgent</button>
+          <button onclick="meldingVersturen('nood')">🆘 Noodknop</button>
+        `;
+        actieveEenheden.push({ role, roepnummer, status: 'actief', melding: '' });
+      }
+
+      updateMeldingen();
+      updateEenheden();
+
+      // Start interval voor updates elke 1 seconde
+      if (!window.updateInterval) {
+        window.updateInterval = setInterval(() => {
+          updateMeldingen();
+          updateEenheden();
+        }, 1000);
+      }
+    }
+
+    function meldingVersturen(type) {
+      const eenheid = actieveEenheden.find((e) => e.roepnummer === huidigeRoepnummer);
+      if (eenheid) {
+        if (type === 'spraak') eenheid.melding = 'Spraakaanvraag';
+        else if (type === 'urgent') eenheid.melding = 'Urgent';
+        else if (type === 'nood') eenheid.melding = 'Noodknop';
+
+        updateEenheden();
+
+        // Stuur melding naar Discord
+        stuurNaarDiscord(`Eenheid ${eenheid.roepnummer} heeft een ${eenheid.melding} verstuurd.`);
+      }
+    }
+
+    function meldingAanmaken() {
+      const text = document.getElementById('meldingText').value;
+      const dienst = document.getElementById('meldingDienst').value;
+      if (text && dienst) {
+        meldingen.push({ text, dienst });
+        updateMeldingen();
+        document.getElementById('meldingText').value = '';
+
+        // Stuur melding naar Discord
+        stuurNaarDiscord(`[${dienst.toUpperCase()}] Nieuwe melding: ${text}`);
+      }
+    }
+
+    function updateMeldingen() {
+      const meldkamerDiv = document.getElementById('alleMeldingen');
+      const dienstDiv = document.getElementById('dienstMeldingen');
+
+      if (meldkamerDiv) {
+        meldkamerDiv.innerHTML = '<h3>Alle meldingen</h3>';
+        meldingen.forEach((m) => {
+          meldkamerDiv.innerHTML += `<p>[${m.dienst.toUpperCase()}] ${m.text}</p>`;
+        });
+      }
+
+      if (dienstDiv && huidigeRol !== 'meldkamer') {
+        dienstDiv.innerHTML = '<h3>Toegewezen meldingen</h3>';
+        meldingen
+          .filter((m) => m.dienst === huidigeRol)
+          .forEach((m) => {
+            dienstDiv.innerHTML += `<p>${m.text}</p>`;
+          });
+      }
+    }
+
+    function updateEenheden() {
+      const container = document.getElementById('actieveEenheden');
+      if (!container) return;
+      container.innerHTML = '<h3>Actieve eenheden</h3>';
+      actieveEenheden.forEach((e) => {
+        let kleurClass = 'unit-box';
+        if (e.role === 'politie') kleurClass += ' unit-p';
+        else if (e.role === 'brandweer') kleurClass += ' unit-b';
+        else if (e.role === 'ambulance') kleurClass += ' unit-a';
+        else if (e.role === 'kmar') kleurClass += ' unit-k';
+
+        if (e.melding) kleurClass += ' blinking';
+        const meldingTekst = e.melding ? ` (<small>${e.melding}</small>)` : '';
+        container.innerHTML += `<div class="${kleurClass}">${e.roepnummer}${meldingTekst}</div>`;
+      });
+    }
+  </script>
 </body>
 </html>
